@@ -31,7 +31,44 @@ class ArtistView(ViewSet):
         artist = Artist.objects.all()
         serializer = ArtistSerializer(artist, many=True)
         return Response(serializer.data)
+    def create(self, request):
+        """Handle POST operations
+
+        Returns
+            Response -- JSON serialized game instance
+        """
+        
+        artist = Artist.objects.create(
+            name=request.data["name"],
+            age=request.data["age"],
+            bio=request.data["bio"],
             
+        )
+        serializer = ArtistSerializer(artist)
+        return Response(serializer.data)
+      
+    def update(self, request, pk):
+        """Handle PUT requests for a game
+
+        Returns:
+            Response -- Empty body with 204 status code
+        """
+
+        artist = Artist.objects.get(pk=pk)
+        artist.name = request.data["name"]
+        artist.age = request.data["age"]
+        artist.bio = request.data["bio"]
+      
+        artist.save()
+
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
+      
+    def destroy(self, request, pk):
+        """Delete Artists
+        """
+        artist = Artist.objects.get(pk=pk)
+        artist.delete()
+        return Response(None, status=status.HTTP_204_NO_CONTENT)      
 class ArtistSerializer(serializers.ModelSerializer):
     """JSON serializer for events
     """

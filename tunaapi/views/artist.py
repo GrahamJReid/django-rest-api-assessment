@@ -62,7 +62,13 @@ class ArtistView(ViewSet):
         artist.save()
 
         return Response(None, status=status.HTTP_204_NO_CONTENT)
-          
+      
+    def destroy(self, request, pk):
+        """Delete Artists
+        """
+        artist = Artist.objects.get(pk=pk)
+        artist.delete()
+        return Response(None, status=status.HTTP_204_NO_CONTENT)      
 class ArtistSerializer(serializers.ModelSerializer):
     """JSON serializer for events
     """

@@ -1,0 +1,10 @@
+[
+  {
+      "model": "tunaapi.genre",
+      "pk": 1,
+      "fields": {
+          "description": "this is the desciption genre"
+          
+      }
+  }
+]

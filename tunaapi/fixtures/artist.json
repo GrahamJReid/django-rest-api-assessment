@@ -1,0 +1,11 @@
+[
+  {
+      "model": "tunaapi.artist",
+      "pk": 1,
+      "fields": {
+          "name": "Graham Reid",
+          "age": 29,
+          "bio": "I am bio"
+      }
+  }
+]

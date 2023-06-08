@@ -73,5 +73,5 @@ class GenreSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Genre
-        fields = ('id', 'description')
-        depth = 1
+        fields = ('id', 'description', 'songs')
+        depth = 2

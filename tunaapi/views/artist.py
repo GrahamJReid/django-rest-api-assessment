@@ -74,5 +74,5 @@ class ArtistSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Artist
-        fields = ('id', 'name', 'age', 'bio')
+        fields = ('id', 'name', 'age', 'bio', 'song')
         depth = 1

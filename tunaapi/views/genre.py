@@ -45,7 +45,7 @@ class GenreView(ViewSet):
             
         )
         serializer = GenreSerializer(genre)
-        return Response(serializer.data)
+        return Response(serializer.data, status = status.HTTP_201_CREATED)
       
     def update(self, request, pk):
         """Handle PUT requests for a game
@@ -60,7 +60,7 @@ class GenreView(ViewSet):
       
         genre.save()
 
-        return Response(None, status=status.HTTP_204_NO_CONTENT)
+        return Response(None, status=status.HTTP_200_OK)
       
     def destroy(self, request, pk):
         """Delete Artists

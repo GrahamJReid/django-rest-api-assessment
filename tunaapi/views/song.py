@@ -4,7 +4,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import serializers, status
-from tunaapi.models import Artist, Song
+from tunaapi.models import Artist, Song, SongGenre
 
 
 
@@ -73,10 +73,21 @@ class SongView(ViewSet):
         """
         artist = Song.objects.get(pk=pk)
         artist.delete()
-        return Response(None, status=status.HTTP_204_NO_CONTENT)      
+        return Response(None, status=status.HTTP_204_NO_CONTENT)   
+      
+
+class SongGenreSerializer(serializers.ModelSerializer):
+    """JSON serializer for songs"""
+
+    class Meta:
+        model = SongGenre
+        fields = ( 'genre_id',)     
+        depth = 1
+            
 class SongSerializer(serializers.ModelSerializer):
     """JSON serializer for events
     """
+    genres = SongGenreSerializer(many=True, read_only=True)
     class Meta:
         model = Song
         fields = ('id', 'title', 'artist_id', 'album','length', 'genres')

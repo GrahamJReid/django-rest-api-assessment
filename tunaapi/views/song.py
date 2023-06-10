@@ -87,13 +87,16 @@ class SongGenreSerializer(serializers.ModelSerializer):
 class SongSerializer(serializers.ModelSerializer):
     """JSON serializer for songs"""
 
-    artist_id = serializers.PrimaryKeyRelatedField(queryset=Artist.objects.all())
+    artist = serializers.SerializerMethodField()
     genres = serializers.SerializerMethodField()
 
     class Meta:
         model = Song
-        fields = ('id', 'title', 'artist_id', 'album', 'length', 'genres')
-
+        fields = ('id', 'title', 'artist', 'album', 'length', 'genres')
+        
     def get_genres(self, obj):
       genres = obj.genres.all()
       return [{'id': genre.genre_id.id, 'description': genre.genre_id.description} for genre in genres]
+    def get_artist(self, obj):
+      artist = obj.artist_id
+      return [{'id': artist.id, 'name': artist.name,'age': artist.age, 'bio': artist.bio}]

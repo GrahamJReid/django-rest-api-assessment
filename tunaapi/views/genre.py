@@ -4,7 +4,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import serializers, status
-from tunaapi.models import Genre
+from tunaapi.models import Genre, SongGenre
 
 
 
@@ -67,11 +67,42 @@ class GenreView(ViewSet):
         """
         genre = Genre.objects.get(pk=pk)
         genre.delete()
-        return Response(None, status=status.HTTP_204_NO_CONTENT)      
+        return Response(None, status=status.HTTP_204_NO_CONTENT) 
+      
+class SongGenreSerializer(serializers.ModelSerializer):
+    """JSON serializer for song genres"""
+
+    id = serializers.SerializerMethodField()
+    title = serializers.SerializerMethodField()
+    artist_id = serializers.SerializerMethodField()
+    album = serializers.SerializerMethodField()
+    length = serializers.SerializerMethodField()
+
+    class Meta:
+        model = SongGenre
+        fields = ('id', 'title', 'artist_id', 'album', 'length')
+
+    def get_id(self, obj):
+        return obj.song_id.id
+
+    def get_title(self, obj):
+        return obj.song_id.title
+
+    def get_artist_id(self, obj):
+        return obj.song_id.artist_id.id
+
+    def get_album(self, obj):
+        return obj.song_id.album
+
+    def get_length(self, obj):
+        return obj.song_id.length   
+                  
 class GenreSerializer(serializers.ModelSerializer):
     """JSON serializer for events
     """
+    songs = SongGenreSerializer(many=True, read_only=True)
     class Meta:
         model = Genre
         fields = ('id', 'description', 'songs')
         depth = 1
+    

@@ -18,10 +18,10 @@ class SongView(ViewSet):
         """
         try:
             song = Song.objects.get(pk=pk)
-            serializer = SongSerializer(song)
+            serializer = SongSerializer(song, context={'request': request})
             return Response(serializer.data)
-        except Artist.DoesNotExist as ex:
-            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+        except Artist.DoesNotExist:
+            return Response({'message': 'Song not found'}, status=status.HTTP_404_NOT_FOUND)
           
     def list(self, request):
         """Handle GET requests to get all game types
@@ -85,10 +85,15 @@ class SongGenreSerializer(serializers.ModelSerializer):
         depth = 1
             
 class SongSerializer(serializers.ModelSerializer):
-    """JSON serializer for events
-    """
-    genres = SongGenreSerializer(many=True, read_only=True)
+    """JSON serializer for songs"""
+
+    artist_id = serializers.PrimaryKeyRelatedField(queryset=Artist.objects.all())
+    genres = serializers.SerializerMethodField()
+
     class Meta:
         model = Song
-        fields = ('id', 'title', 'artist_id', 'album','length', 'genres')
-        depth = 1
+        fields = ('id', 'title', 'artist_id', 'album', 'length', 'genres')
+
+    def get_genres(self, obj):
+      genres = obj.genres.all()
+      return [{'id': genre.genre_id.id, 'description': genre.genre_id.description} for genre in genres]

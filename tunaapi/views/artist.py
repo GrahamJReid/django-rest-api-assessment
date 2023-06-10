@@ -4,7 +4,9 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import serializers, status
-from tunaapi.models import Artist
+from django.db.models import Count
+from tunaapi.models import Artist, Song
+
 
 
 
@@ -19,6 +21,7 @@ class ArtistView(ViewSet):
         try:
             artist = Artist.objects.get(pk=pk)
             serializer = ArtistSerializer(artist)
+            artist = Artist.objects.annotate(songs_count=Count('song')).get(pk=pk)
             return Response(serializer.data)
         except Artist.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
@@ -72,7 +75,10 @@ class ArtistView(ViewSet):
 class ArtistSerializer(serializers.ModelSerializer):
     """JSON serializer for events
     """
+    songs_count = serializers.SerializerMethodField()
     class Meta:
         model = Artist
-        fields = ('id', 'name', 'age', 'bio', 'song')
+        fields = ('id', 'name', 'age', 'bio','songs_count', 'song')
         depth = 1
+    def get_songs_count(self, obj):
+        return obj.song.count()
